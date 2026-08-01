@@ -1,4 +1,4 @@
-import { Vector2, WebGLRenderer } from "three";
+import { PCFShadowMap, Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
 import { initState } from "./state";
 import { addItem, removeItem } from "./item";
@@ -7,8 +7,7 @@ console.table(["Hello World", new Date()]);
 
 
 const state = initState();
-const debugCanvas = document.getElementById("debug") as HTMLCanvasElement;
-const ctx = debugCanvas.getContext("2d") as CanvasRenderingContext2D;
+const placeholder = document.getElementById("debug") as HTMLCanvasElement;
 const renderer = new WebGLRenderer({ antialias: true });
 
 
@@ -81,25 +80,6 @@ function tick(time: number) {
     state.camera.position.set(20, 50, 100);
     state.camera.lookAt(20, 0, 20);
 
-    // render
-    ctx.fillStyle = "green";
-    ctx.fillRect(0, 0, 400, 400);
-
-    ctx.fillStyle = "limegreen";
-    ctx.beginPath();
-    ctx.arc(state.ufo.pos.x * 10, state.ufo.pos.y * 10, 50, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.strokeStyle = "yellow";
-    ctx.beginPath();
-    ctx.moveTo(state.ufo.pos.x * 10, state.ufo.pos.y * 10);
-    ctx.lineTo(state.ufo.pos.x * 10 + state.ufo.direction.x * 20, state.ufo.pos.y * 10 + state.ufo.direction.y * 20);
-    ctx.stroke();
-
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(state.player.pos.x * 10, state.player.pos.y * 10, 10, 0, 2 * Math.PI);
-    ctx.fill();
-
     renderer.render(state.scene, state.camera);
 
     window.requestAnimationFrame(tick);
@@ -119,12 +99,12 @@ window.addEventListener("keyup", onKey(false));
 async function initThreeJs() {
     renderer.setSize(800, 500);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor("#ff00ff");
-    // renderer.shadowMap.enabled = true;
-    // renderer.shadowMap.type = PCFShadowMap; //  Makes shadow edges smoother
+    renderer.setClearColor("#000000");
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = PCFShadowMap; //  Makes shadow edges smoother
     await loadScene(state);
 
-    debugCanvas.parentElement!.appendChild(renderer.domElement);
+    placeholder.parentElement!.replaceChild(renderer.domElement, placeholder);
 }
 
 initThreeJs();

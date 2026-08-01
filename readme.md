@@ -74,3 +74,7 @@ not accounted for - some research and code review to fix a bug
 * items disappear when they get to the top and new ones spawn
 
 ![Progress screnshot 4](screenshots/ss_04.png)
+
+`+7m` lighting
+
+![Progress screnshot 5](screenshots/ss_05.png)

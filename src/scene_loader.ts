@@ -1,6 +1,6 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/Addons.js";
 import { State } from "./state";
-import { AmbientLight, DirectionalLight, FrontSide, HemisphereLight } from "three";
+import { AmbientLight, DirectionalLight, FrontSide, HemisphereLight, Material, MeshStandardMaterial, SpotLight, Vector3 } from "three";
 
 export async function loadScene(state: State): Promise<void> {
 
@@ -9,8 +9,17 @@ export async function loadScene(state: State): Promise<void> {
     // Update material to only render the front (annoying casting)
     assets.scene.traverse(ob => {
         if (ob.type === "Mesh" && "material" in ob) {
-            (ob.material as any).side = FrontSide;
-            (ob.material as any).needsUpdate = true;
+            const mat = ob.material as MeshStandardMaterial;
+            mat.side = FrontSide;
+            mat.needsUpdate = true;
+                if (mat.isMeshStandardMaterial) {
+            mat.roughness = 0.8;
+            mat.metalness = 0.0;
+        } 
+            console.log(mat)
+
+			ob.castShadow = true;
+			ob.receiveShadow = true;
         }
     })
 
@@ -27,11 +36,34 @@ export async function loadScene(state: State): Promise<void> {
 
     console.log(state.ufo.object, state.player.object)
 
-    const ambientLight = new AmbientLight(0xffffff, 1.5);
+    const ambientLight = new AmbientLight(0xffffff, 0.5);
     state.scene.add(ambientLight);
-    const skyLight = new HemisphereLight(0x4444ff, 0x000000, 6.0);
-    
+
+    const skyLight = new HemisphereLight(0xaaccff, 0x000000, 8.0);
     state.scene.add(skyLight);
+    const LIGHT_BOUNDS = 40;
+    const moonLight = new DirectionalLight(0xffffff, 8);
+    moonLight.position.set(20,10,20);
+    moonLight.target.position.set(20,0,20);
+    moonLight.castShadow = true;
+    moonLight.shadow.mapSize.width = 2048;
+    moonLight.shadow.mapSize.height = 2048;
+    moonLight.shadow.camera.near = 0.5;    
+    moonLight.shadow.camera.far = 20;      
+    moonLight.shadow.camera.left = -LIGHT_BOUNDS;
+    moonLight.shadow.camera.right = LIGHT_BOUNDS;
+    moonLight.shadow.camera.top = LIGHT_BOUNDS;
+    moonLight.shadow.camera.bottom = -LIGHT_BOUNDS;
+    moonLight.shadow.bias= -0.01; 
+    moonLight.shadow.intensity = 0.75;
+    state.scene.add(moonLight);
+    state.scene.add(moonLight.target);
+
+    const spot = new SpotLight(0x00ff00, 10, 0, Math.PI*0.1, 0.2, 0);
+    spot.position.set(20,10,20);
+    spot.target.position.set(20,0,20);
+    state.scene.add(spot);
+    state.scene.add(spot.target);
 
     state.assets = assets;
 }
