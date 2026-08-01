@@ -1,0 +1,11 @@
+{
+  "name": "trijam_383-chosen-one",
+  "version": "1.0.0",
+  "description": "My trijam 383 entry",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "madcoretom",
+  "license": "ISC"
+}
