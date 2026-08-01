@@ -1,30 +1,36 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/Addons.js";
-import { State } from "./main";
-import { AmbientLight, BackSide, FrontSide } from "three";
+import { State } from "./state";
+import { AmbientLight, FrontSide } from "three";
 
 export async function loadScene(state: State): Promise<void> {
 
     const assets = await loadGltfPromise("scene.glb");
 
-    // Update material to only render the front
+    // Update material to only render the front (annoying casting)
     assets.scene.traverse(ob => {
         if (ob.type === "Mesh" && "material" in ob) {
-            ob.material.side = FrontSide;
-            ob.material.needsUpdate = true;
-            console.log("MAT", ob.material)
+            (ob.material as any).side = FrontSide;
+            (ob.material as any).needsUpdate = true;
         }
     })
 
     state.ufo.object = assets.scene.getObjectByName("ufo")!.clone();
     state.scene.add(state.ufo.object);
 
-    state.player.object = assets.scene.getObjectByName("Cube")!.clone();
+    state.player.object = assets.scene.getObjectByName("Man")!.clone();
     state.scene.add(state.player.object);
+
+    const grass = assets.scene.getObjectByName("Grass")!;
+    grass.scale.set(4,1,4);
+    grass.position.set(0,0,40);
+    state.scene.add(grass);
 
     console.log(state.ufo.object, state.player.object)
 
     const ambientLight = new AmbientLight(0xffffff, 2.0);
     state.scene.add(ambientLight);
+
+    state.assets = assets;
 }
 
 

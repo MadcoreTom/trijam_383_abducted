@@ -1,34 +1,12 @@
-import { Camera, Object3D, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
+import { initState } from "./state";
+import { addItem } from "./item";
 
 console.table(["Hello World", new Date()]);
 
-export type State = {
-    player: {
-        pos: Vector2,
-        object?: Object3D
-    },
-    ufo: {
-        pos: Vector2,
-        direction: Vector2,
-        object?: Object3D
-    },
-    scene: Scene,
-    camera: Camera
-}
-const state: State = {
-    player: {
-        pos: new Vector2(5, 7)
-    },
-    ufo: {
-        pos: new Vector2(20, 20),
-        direction: new Vector2(1, 0)
-    },
-    scene: new Scene(),
-    camera: new PerspectiveCamera(36, 1 / 1, 1, 1500)
-}
 
-
+const state = initState();
 const debugCanvas = document.getElementById("debug") as HTMLCanvasElement;
 const ctx = debugCanvas.getContext("2d") as CanvasRenderingContext2D;
 const renderer = new WebGLRenderer({ antialias: true });
@@ -39,10 +17,10 @@ function tick(time: number) {
     // update
 
     const aim = state.player.pos.clone().sub(state.ufo.pos).normalize();
-    state.ufo.direction.addScaledVector(aim, 0.03).normalize(); // TODO make this line framerate independent
+    state.ufo.direction.addScaledVector(aim, 0.04).normalize(); // TODO make this line framerate independent
 
     // move
-const PLAYER_SPEED = 0.2;
+    const PLAYER_SPEED = 0.2;
     state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / 1.1);
 
     if (KEYS["ArrowUp"]) {
@@ -67,8 +45,8 @@ const PLAYER_SPEED = 0.2;
     }
     // state.camera.position.set(state.player.pos.x, 600, 500);
     // state.camera.lookAt(state.player.pos.x, 0, (200 * 2 + state.player.pos.y) / 3);
-    state.camera.position.set(0, 50, 100);
-    state.camera.lookAt(0, 0, 20);
+    state.camera.position.set(20, 50, 100);
+    state.camera.lookAt(20, 0, 20);
 
     // render
     ctx.fillStyle = "green";
@@ -76,17 +54,17 @@ const PLAYER_SPEED = 0.2;
 
     ctx.fillStyle = "limegreen";
     ctx.beginPath();
-    ctx.arc(state.ufo.pos.x*10, state.ufo.pos.y*10, 50, 0, 2 * Math.PI);
+    ctx.arc(state.ufo.pos.x * 10, state.ufo.pos.y * 10, 50, 0, 2 * Math.PI);
     ctx.fill();
     ctx.strokeStyle = "yellow";
     ctx.beginPath();
-    ctx.moveTo(state.ufo.pos.x*10, state.ufo.pos.y*10);
-    ctx.lineTo(state.ufo.pos.x*10 + state.ufo.direction.x * 20, state.ufo.pos.y*10 + state.ufo.direction.y * 20);
+    ctx.moveTo(state.ufo.pos.x * 10, state.ufo.pos.y * 10);
+    ctx.lineTo(state.ufo.pos.x * 10 + state.ufo.direction.x * 20, state.ufo.pos.y * 10 + state.ufo.direction.y * 20);
     ctx.stroke();
 
     ctx.fillStyle = "white";
     ctx.beginPath();
-    ctx.arc(state.player.pos.x*10, state.player.pos.y*10, 10, 0, 2 * Math.PI);
+    ctx.arc(state.player.pos.x * 10, state.player.pos.y * 10, 10, 0, 2 * Math.PI);
     ctx.fill();
 
     renderer.render(state.scene, state.camera);
@@ -105,13 +83,18 @@ function onKey(down: boolean): (evt: KeyboardEvent) => unknown {
 window.addEventListener("keydown", onKey(true));
 window.addEventListener("keyup", onKey(false));
 
-function initThreeJs() {
+async function initThreeJs() {
     renderer.setSize(800, 800);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor("#ff00ff");
     // renderer.shadowMap.enabled = true;
     // renderer.shadowMap.type = PCFShadowMap; //  Makes shadow edges smoother
-    loadScene(state);
+    await loadScene(state);
+
+    addItem(state, 5, 5);
+    addItem(state, 0, 0);
+    addItem(state, 5, 6);
+
     debugCanvas.parentElement!.appendChild(renderer.domElement);
 }
 

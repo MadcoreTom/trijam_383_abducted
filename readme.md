@@ -53,3 +53,17 @@ Setting the camera has been wasting a bit of time, and the texture won't load ei
 
 ![Progress screnshot 2](screenshots/ss_02.png)
 `17:00`
+
+not accounted for - some research and code review to fix a bug
+
+`10:06` back on it again
+
+`10:24`
+
+* Added items (cubes)
+* Modelled player
+* added floor
+* adjusted camera and stuff
+
+![Progress screnshot 3](screenshots/ss_03.png)
+
