@@ -56,7 +56,7 @@ Setting the camera has been wasting a bit of time, and the texture won't load ei
 
 not accounted for - some research and code review to fix a bug
 
-`10:06` back on it again
+`10:06` back on it again (18m)
 
 `10:24`
 
@@ -67,3 +67,10 @@ not accounted for - some research and code review to fix a bug
 
 ![Progress screnshot 3](screenshots/ss_03.png)
 
+`22 more minutes`
+
+* I added models to the items (cow and tree)
+* I made them get abducted (items faster)
+* items disappear when they get to the top and new ones spawn
+
+![Progress screnshot 4](screenshots/ss_04.png)
