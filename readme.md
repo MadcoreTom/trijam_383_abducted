@@ -46,3 +46,10 @@ The values to tweak are the speed difference, and the direction change speed
 ![Progress screnshot 1](screenshots/ss_01.png)
 
 `16:28`
+
+modelling, loading the scene, and setting the camera.
+
+Setting the camera has been wasting a bit of time, and the texture won't load either, it's just black.
+
+![Progress screnshot 2](screenshots/ss_02.png)
+`17:00`
