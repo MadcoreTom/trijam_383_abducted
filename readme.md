@@ -38,3 +38,11 @@ Tools
 `16:04`
 
 Let's get the project started
+
+Then I implemented the UFO and player movement in 2d
+
+The values to tweak are the speed difference, and the direction change speed
+
+![Progress screnshot 1](screenshots/ss_01.png)
+
+`16:28`
