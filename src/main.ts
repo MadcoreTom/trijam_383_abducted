@@ -90,6 +90,9 @@ const KEYS: { [key: string]: boolean } = {};
 function onKey(down: boolean): (evt: KeyboardEvent) => unknown {
     return evt => {
         KEYS[evt.key] = down;
+        if(state.listener && state.listener.context.state === "suspended"){
+            state.listener.context.resume();
+        }
     }
 }
 

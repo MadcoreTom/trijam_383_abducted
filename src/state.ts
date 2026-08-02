@@ -1,4 +1,4 @@
-import { Camera, Object3D, PerspectiveCamera, Scene, Vector2 } from "three";
+import { AudioListener, Camera, Object3D, PerspectiveCamera, Scene, Vector2 } from "three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { addItem, Item } from "./item";
 
@@ -16,7 +16,8 @@ export type State = {
     items: Item[],
     scene: Scene,
     camera: Camera,
-    assets?: GLTF
+    assets?: GLTF,
+    listener?: AudioListener
 }
 
 export function initState(): State {

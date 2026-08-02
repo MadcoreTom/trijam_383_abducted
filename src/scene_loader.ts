@@ -1,6 +1,6 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/Addons.js";
 import { State } from "./state";
-import { AmbientLight, DirectionalLight, FrontSide, HemisphereLight, Material, MeshStandardMaterial, SpotLight, Vector3 } from "three";
+import { AmbientLight, Audio, AudioListener, AudioLoader, DirectionalLight, FrontSide, HemisphereLight, Material, MeshStandardMaterial, SpotLight, Vector3 } from "three";
 
 export async function loadScene(state: State): Promise<void> {
 
@@ -66,6 +66,24 @@ export async function loadScene(state: State): Promise<void> {
     state.scene.add(spot.target);
 
     state.assets = assets;
+
+    /// music
+
+    const listener = new AudioListener();
+    state.camera.add(listener);
+    // create a global audio source
+    const sound = new Audio(listener);
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new AudioLoader();
+    audioLoader.load('music.ogg', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.play();
+    });
+
+    state.listener = listener;
+
 }
 
 

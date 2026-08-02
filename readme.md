@@ -52,13 +52,13 @@ modelling, loading the scene, and setting the camera.
 Setting the camera has been wasting a bit of time, and the texture won't load either, it's just black.
 
 ![Progress screnshot 2](screenshots/ss_02.png)
-`17:00`
+`17:00` (56m so far)
 
 not accounted for - some research and code review to fix a bug
 
 `10:06` back on it again (18m)
 
-`10:24`
+`10:24` 
 
 * Added items (cubes)
 * Modelled player
@@ -78,3 +78,59 @@ not accounted for - some research and code review to fix a bug
 `+7m` lighting
 
 ![Progress screnshot 5](screenshots/ss_05.png)
+
+## Day 2 - 103 minutes so far (1 hour, 43 seconds)
+
+Outstanding tasks
+
+* spotlight is attached to UFO
+* game over state
+* game difficulty increase
+    * speed gets closer to player speed
+    * turning speed increases
+* stop ufo orbiting player (turning speed varies with sine wave and time?)
+* more items
+    * like a bomb item that pauses the ufo
+    * haystacks
+    * car
+* hud
+    * time so far
+    * top time
+    * game over state
+    * some instructions
+    * explain connection with  theme?
+* support for WASD too
+* audio
+    * music with theremin style from strudel
+    * use this with three.js https://threejs.org/docs/#Audio
+    * sound effects? BFXR?
+* stop palyer moving out of bounds
+
+
+`9:33` staring starting on music
+
+strudel repl (I'm still learning)
+```js
+setcpm(180/4)
+
+stack(
+    note("<[d4 g4] [d4 g4] [f4 b4] a4 [d4 g4] [f4 b4] [a4 b4] a4>")
+    .s("sine")                     
+    .legato(2)                     
+    .vib(3, 0.2)                     
+    .lpf(1000)
+    .gain(sine.range(0.4, 0.9).slow(4)) 
+    .room(0.8)                       
+    .delay(0.4).delaytime(0.25).delayfeedback(0.6) 
+    ,
+    s("bd ~ [~ sd] ~").room(0.2).gain(0.4)
+    ,
+    s("~ hh ~ hh").room(0.2).gain(0.3)
+    ,
+    n("- 1 1 1").s(choose("saw","square")).room(0.1).fm(saw.range(0, 3).slow(4)).lpf(sine.range(1000, 20000).slow(8)).lpq(20).room(0.6)
+    ,
+    note("- - - A5").piano().gain(0.3).delay(0.4).delaytime(0.25).delayfeedback(0.6)
+).crush(sine.range(4,16).slow(4))
+```
+
+`9:51` (+18 minutes) total 121/180
