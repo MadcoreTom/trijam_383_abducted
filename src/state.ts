@@ -1,4 +1,4 @@
-import { AudioListener, Camera, Object3D, PerspectiveCamera, Scene, SpotLight, Vector2 } from "three";
+import { Audio, AudioListener, Camera, Object3D, PerspectiveCamera, Scene, SpotLight, Vector2 } from "three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 import { addItem, Item } from "./item";
 import { HEIGHT, WIDTH } from "./constants";
@@ -20,7 +20,12 @@ export type State = {
     scene: Scene,
     camera: Camera,
     assets?: GLTF,
-    listener?: AudioListener
+    listener?: AudioListener,
+    time:number,
+    topTime:number;
+    slowtimer: number;
+    bonk?: Audio,
+    abduct?: Audio
 }
 
 export function initState(): State {
@@ -37,20 +42,24 @@ export function initState(): State {
         scene: new Scene(),
         camera: new PerspectiveCamera(18, WIDTH / HEIGHT, 1, 1500),
         items: [
-        ]
+        ],
+        time: 0,
+        topTime: 0,
+        slowtimer:0
     };
     return state;
 }
 
-export function resetSate(state:State){
-    state.scene.traverse(ob=>{
-        if(ob.name.startsWith("ITEM")){
-            ob.remove();
-            console.log("REMOVED")
+export function resetSate(state: State) {
+    const toRemove: Object3D[] = [];
+    state.scene.traverse(ob => {
+        if (ob && ob.name.startsWith("ITEM")) {
+            toRemove.push(ob);
         };
     });
+    toRemove.forEach(ob => ob.removeFromParent());
     state.items = [];
-    state.player.pos =  new Vector2(5, 7);
+    state.player.pos = new Vector2(5, 7);
     state.player.height = 0;
     state.ufo.pos = new Vector2(20, 20);
 }

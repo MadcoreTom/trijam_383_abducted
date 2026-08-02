@@ -7,7 +7,7 @@ export type Item = {
     object?: Object3D;
 }
 
-const ITEM_MODELS = ["Item_cow", "Item_tree"];
+const ITEM_MODELS = ["Item_cow", "Item_tree", "Hay"];
 
 export function addItem(state: State, x: number, y: number): void {
     const name = ITEM_MODELS[Math.floor(Math.random() * ITEM_MODELS.length)];

@@ -83,6 +83,25 @@ export async function loadScene(state: State): Promise<void> {
         sound.play();
     });
 
+     const bonk = new Audio(listener);
+    // load a sound and set it as the Audio object's buffer
+    audioLoader.load('bonk.wav', function (buffer) {
+        bonk.setBuffer(buffer);
+        bonk.setLoop(false);
+        bonk.setVolume(0.75);
+    });
+    state.bonk = bonk;
+
+    
+     const abduct = new Audio(listener);
+    // load a sound and set it as the Audio object's buffer
+    audioLoader.load('abduct.wav', function (buffer) {
+        abduct.setBuffer(buffer);
+        abduct.setLoop(false);
+        abduct.setVolume(0.75);
+    });
+    state.abduct = abduct;
+
     state.listener = listener;
 
 }

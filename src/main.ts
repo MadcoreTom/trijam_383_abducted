@@ -10,8 +10,11 @@ const state = initState();
 const placeholder = document.getElementById("debug") as HTMLCanvasElement;
 const renderer = new WebGLRenderer({ antialias: true });
 
+let lastTime = 0;
 
 function tick(time: number) {
+    const delta = Math.min(100,time - lastTime);
+    lastTime = time;
 
     const ABDUCTION_RADIUS = 2.5;
     const PLAYER_ABDUCTION_SPEED = 0.2;
@@ -19,9 +22,12 @@ function tick(time: number) {
     const ABDUCTION_HEIGHT = 7;
     // update
     if (state.mode === "PLAYING") {
+        state.time += delta;
 
+        // 0.04 to (0.04 + 0.1) in 45 seconds
+        const turningPower = 0.04 + 0.1 * Math.pow(0.5,state.time / (1000 * 45));
         const aim = state.player.pos.clone().sub(state.ufo.pos).normalize();
-        state.ufo.direction.addScaledVector(aim, 0.04).normalize(); // TODO make this line framerate independent
+        state.ufo.direction.addScaledVector(aim,turningPower).normalize(); // TODO make this line framerate independent
 
         // move
         const PLAYER_SPEED = 0.2;
@@ -52,23 +58,46 @@ function tick(time: number) {
         let abductingPlayer = false;
         if (state.ufo.pos.distanceToSquared(state.player.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
             state.player.height += PLAYER_ABDUCTION_SPEED;
-            abductingPlayer= true;
+            abductingPlayer = true;
             if (state.player.height > ABDUCTION_HEIGHT) {
-                    state.mode = "GAMEOVER";
-                    overlay.style.display = "block"
+                  if(state.abduct){
+                        if(state.abduct.isPlaying){
+                            state.abduct.stop();
+                        }
+                        state.abduct.play();
+                    }
+                state.mode = "GAMEOVER";
+                state.topTime = Math.max(state.topTime, state.time);
+                overlay.style.display = "block";
+                overlay.innerHTML = `<p><b>You got abducted</b> by the aliens! You Lose!</p>
+    <p>You survived <u>${Math.floor(state.time / 1000)} seconds</u>. Your best score is ${Math.floor(state.topTime / 1000)} seconds.<br>Try and get a higher score</p>
+<p>Controls: WASD or Arrow keys</p>
+<p>Made for the TriJam game jam #383</p>
+<button onclick='play()'>Play</button>`;
+state.time = 0;
             }
         } else if (state.player.height > 0) {
             state.player.height -= PLAYER_ABDUCTION_SPEED;
             state.player.height = Math.max(0, state.player.height);
         }
-        
-        state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / 1.1 * (abductingPlayer ? 0.5 : 1));
+
+        const ufoSpeedMuiltiplier = 0.95 + 0.18 * Math.pow(0.5,state.time / (1000 * 10));
+        state.slowtimer = Math.max(0, state.slowtimer-delta);
+
+        state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / ufoSpeedMuiltiplier * (abductingPlayer ? 0.5 : 1) * (state.slowtimer > 0 ? 0.8 : 1));
 
         state.items.forEach(item => {
             if (state.ufo.pos.distanceToSquared(item.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
                 item.height += ITEM_ABDUCTION_SPEED;
                 item.object && (item.object.position.setY(item.height));
                 if (item.height > ABDUCTION_HEIGHT) {
+                    state.slowtimer += 500; // add the slow effect for 500ms
+                    if(state.bonk){
+                        if(state.bonk.isPlaying){
+                            state.bonk.stop();
+                        }
+                        state.bonk.play();
+                    }
                     removeItem(state, item);
                 }
             } else if (item.height > 0) {
@@ -128,7 +157,7 @@ const overlay = document.createElement("div") as HTMLDivElement;
 overlay.style.background = "black";
 overlay.style.border = "2px solid #1f1";
 overlay.style.padding = "10px"
-overlay.style.margin = "-25% auto"
+overlay.style.margin = (HEIGHT * -2/3) + "px auto"
 overlay.style.zIndex = "100";
 overlay.style.position = "relative"
 overlay.style.width = (WIDTH *2/3) + "px";
@@ -158,12 +187,6 @@ async function initThreeJs() {
     state.mode = "PLAYING";
     overlay.style.display = "none";
     resetSate(state);
-    // set the overlay context for next time
-    overlay.innerHTML = `<p><b>You got abducted</b> by the aliens! You Lose!</p>
-    <p>Try and get a higher score</p>
-<p>Controls: WASD or Arrow keys</p>
-<p>Made for the TriJam game jam #383</p>
-<button onclick='play()'>Play</button>`;
 }
 
 initThreeJs();

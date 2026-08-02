@@ -84,7 +84,7 @@ not accounted for - some research and code review to fix a bug
 Outstanding tasks
 
 * spotlight is attached to UFO ✅
-* game over state
+* game over state ✅
 * game difficulty increase
     * speed gets closer to player speed
     * turning speed increases
@@ -94,17 +94,17 @@ Outstanding tasks
     * haystacks
     * car
 * hud
-    * time so far
-    * top time
-    * game over state
-    * some instructions
-    * explain connection with  theme?
+    * time so far ❌
+    * top time ❌
+    * game over state ✅
+    * some instructions ✅
+    * explain connection with  theme? ✅
 * support for WASD too ✅
 * audio ✅
     * music with theremin style from strudel ✅
     * use this with three.js https://threejs.org/docs/#Audio ✅
-    * sound effects? BFXR?
-* stop palyer moving out of bounds
+    * sound effects? BFXR? ❌
+* stop palyer moving out of bounds ✅
 
 
 `9:33` staring starting on music
@@ -145,3 +145,8 @@ stack(
  did the hud, but still no score
 
 ![Progress screnshot 6](screenshots/ss_06.png)
+
+`10:57` start again after playtesting
+`10:12` +15m (paused) (7m remainingh)
+
+final sound effects, and difficulty increases
