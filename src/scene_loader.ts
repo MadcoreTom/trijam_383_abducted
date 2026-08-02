@@ -64,6 +64,7 @@ export async function loadScene(state: State): Promise<void> {
     spot.target.position.set(20,0,20);
     state.scene.add(spot);
     state.scene.add(spot.target);
+    state.ufo.spotlight = spot;
 
     state.assets = assets;
 

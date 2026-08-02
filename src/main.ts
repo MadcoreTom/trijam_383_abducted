@@ -2,9 +2,9 @@ import { PCFShadowMap, Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
 import { initState } from "./state";
 import { addItem, removeItem } from "./item";
+import { HEIGHT, WIDTH } from "./constants";
 
 console.table(["Hello World", new Date()]);
-
 
 const state = initState();
 const placeholder = document.getElementById("debug") as HTMLCanvasElement;
@@ -22,25 +22,30 @@ function tick(time: number) {
     const PLAYER_SPEED = 0.2;
     state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / 1.1);
 
+    let dir: Vector2 = new Vector2(0,0);
+
     if (state.player.height == 0) {
-        if (KEYS["ArrowUp"]) {
-            state.player.pos.add(new Vector2(0, -PLAYER_SPEED));
+        if (KEYS["ArrowUp"] || KEYS["w"]) {
+            dir.setY(-1);
         }
-        if (KEYS["ArrowDown"]) {
-            state.player.pos.add(new Vector2(0, PLAYER_SPEED));
+        if (KEYS["ArrowDown"] || KEYS["s"]) {
+            dir.setY(1);
         }
-        if (KEYS["ArrowLeft"]) {
-            state.player.pos.add(new Vector2(-PLAYER_SPEED, 0));
+        if (KEYS["ArrowLeft"] || KEYS["a"]) {
+            dir.setX(-1);
         }
-        if (KEYS["ArrowRight"]) {
-            state.player.pos.add(new Vector2(PLAYER_SPEED, 0));
+        if (KEYS["ArrowRight"] || KEYS["d"]) {
+            dir.setX(1);
+        }
+        if (dir.lengthSq() > 0) {
+            state.player.pos.add(dir?.normalize().multiplyScalar(PLAYER_SPEED));
         }
     }
 
     const ABDUCTION_RADIUS = 2.5;
     const PLAYER_ABDUCTION_SPEED = 0.2;
     const ITEM_ABDUCTION_SPEED = 0.4;
-    const ABDUCTION_HEIGHT = 5;
+    const ABDUCTION_HEIGHT = 7;
     if (state.ufo.pos.distanceToSquared(state.player.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
         state.player.height += PLAYER_ABDUCTION_SPEED;
     } else if (state.player.height > 0) {
@@ -69,7 +74,11 @@ function tick(time: number) {
 
     // update scene
     if (state.ufo.object) {
-        state.ufo.object.position.set(state.ufo.pos.x, 5, state.ufo.pos.y);
+        state.ufo.object.position.set(state.ufo.pos.x, ABDUCTION_HEIGHT, state.ufo.pos.y);
+    }
+    if(state.ufo.spotlight){
+        state.ufo.spotlight.position.set(state.ufo.pos.x, ABDUCTION_HEIGHT, state.ufo.pos.y);
+        state.ufo.spotlight.target.position.set(state.ufo.pos.x, 0, state.ufo.pos.y);
     }
     if (state.player.object) {
         state.player.object.position.set(state.player.pos.x, state.player.height, state.player.pos.y)
@@ -100,7 +109,7 @@ window.addEventListener("keydown", onKey(true));
 window.addEventListener("keyup", onKey(false));
 
 async function initThreeJs() {
-    renderer.setSize(800, 500);
+    renderer.setSize(WIDTH, HEIGHT);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor("#000000");
     renderer.shadowMap.enabled = true;

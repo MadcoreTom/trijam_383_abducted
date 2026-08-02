@@ -83,7 +83,7 @@ not accounted for - some research and code review to fix a bug
 
 Outstanding tasks
 
-* spotlight is attached to UFO
+* spotlight is attached to UFO ✅
 * game over state
 * game difficulty increase
     * speed gets closer to player speed
@@ -99,10 +99,10 @@ Outstanding tasks
     * game over state
     * some instructions
     * explain connection with  theme?
-* support for WASD too
-* audio
-    * music with theremin style from strudel
-    * use this with three.js https://threejs.org/docs/#Audio
+* support for WASD too ✅
+* audio ✅
+    * music with theremin style from strudel ✅
+    * use this with three.js https://threejs.org/docs/#Audio ✅
     * sound effects? BFXR?
 * stop palyer moving out of bounds
 
@@ -134,3 +134,6 @@ stack(
 ```
 
 `9:51` (+18 minutes) total 121/180
+
+`10:01` start again
+`10:10` (+9 minutes) total 130/180
