@@ -86,13 +86,13 @@ Outstanding tasks
 * spotlight is attached to UFO ✅
 * game over state ✅
 * game difficulty increase
-    * speed gets closer to player speed
-    * turning speed increases
-* stop ufo orbiting player (turning speed varies with sine wave and time?)
+    * speed gets closer to player speed ✅
+    * turning speed increases ✅
+* stop ufo orbiting player (turning speed varies with sine wave and time?) ❌
 * more items
-    * like a bomb item that pauses the ufo
-    * haystacks
-    * car
+    * like a bomb item that pauses the ufo ❌
+    * haystacks ✅
+    * car ❌
 * hud
     * time so far ❌
     * top time ❌
@@ -150,3 +150,5 @@ stack(
 `10:12` +15m (paused) (7m remainingh)
 
 final sound effects, and difficulty increases
+
+Uploaded to here https://itch.io/jam/trijam-383/rate/4855560
