@@ -12,6 +12,7 @@ const ITEM_MODELS = ["Item_cow", "Item_tree"];
 export function addItem(state: State, x: number, y: number): void {
     const name = ITEM_MODELS[Math.floor(Math.random() * ITEM_MODELS.length)];
     const object = state.assets!.scene.getObjectByName(name)!.clone();
+    object.name = "ITEM" + state.items.length;
     state.scene.add(object);
     const i: Item = {
         pos: new Vector2(x, y),

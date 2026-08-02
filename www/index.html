@@ -3,11 +3,45 @@
 
 <head>
     <title>Trijam 383</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+
+        body,
+        html {
+            background: #111;
+            color: #1f1;
+            font-family: "Silkscreen", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        canvas {
+            margin: auto;
+        }
+
+        button {
+            border: 6px outset #aa11ff;
+            background: #aa11ff;
+            color: white;
+            font-family: "Silkscreen", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        button:hover {
+            text-decoration: underline;
+        }
+
+        button:active {
+            border: 6px inset #aa11ff;
+        }
+    </style>
 </head>
 
 <body>
-    test
-    <canvas width="400" height="400" id="debug"></canvas>
+    <div id="debug">Loading...</div>
     <script src="./js/main.js"></script>
 </body>
 

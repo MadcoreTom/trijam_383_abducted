@@ -137,3 +137,11 @@ stack(
 
 `10:01` start again
 `10:10` (+9 minutes) total 130/180
+
+
+`10:19` start again
+`10:47` (+28) total 158/180 (22m remaining!)
+
+ did the hud, but still no score
+
+![Progress screnshot 6](screenshots/ss_06.png)

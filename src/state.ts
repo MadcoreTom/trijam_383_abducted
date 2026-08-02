@@ -4,6 +4,7 @@ import { addItem, Item } from "./item";
 import { HEIGHT, WIDTH } from "./constants";
 
 export type State = {
+    mode: "PLAYING" | "GAMEOVER" | "INTRO",
     player: {
         pos: Vector2,
         object?: Object3D,
@@ -24,6 +25,7 @@ export type State = {
 
 export function initState(): State {
     const state: State = {
+        mode: "INTRO",
         player: {
             pos: new Vector2(5, 7),
             height:0
@@ -38,4 +40,17 @@ export function initState(): State {
         ]
     };
     return state;
+}
+
+export function resetSate(state:State){
+    state.scene.traverse(ob=>{
+        if(ob.name.startsWith("ITEM")){
+            ob.remove();
+            console.log("REMOVED")
+        };
+    });
+    state.items = [];
+    state.player.pos =  new Vector2(5, 7);
+    state.player.height = 0;
+    state.ufo.pos = new Vector2(20, 20);
 }
