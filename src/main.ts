@@ -1,8 +1,8 @@
 import { PCFShadowMap, Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
 import { initState, resetSate } from "./state";
-import { addItem, removeItem } from "./item";
-import { HEIGHT, WIDTH } from "./constants";
+import { Item } from "./item";
+import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
 
 console.table(["Hello World", new Date()]);
 
@@ -16,21 +16,16 @@ function tick(time: number) {
     const delta = Math.min(100,time - lastTime);
     lastTime = time;
 
-    const ABDUCTION_RADIUS = 2.5;
-    const PLAYER_ABDUCTION_SPEED = 0.2;
-    const ITEM_ABDUCTION_SPEED = 0.4;
-    const ABDUCTION_HEIGHT = 7;
     // update
     if (state.mode === "PLAYING") {
         state.time += delta;
 
         // 0.04 to (0.04 + 0.1) in 45 seconds
-        const turningPower = 0.04 + 0.1 * Math.pow(0.5,state.time / (1000 * 45));
+        const turningPower = TURNING_POWER.start + (TURNING_POWER.end - TURNING_POWER.start) * Math.pow(0.5, state.time / (1000 * TURNING_POWER.halfLifeSeconds));
         const aim = state.player.pos.clone().sub(state.ufo.pos).normalize();
         state.ufo.direction.addScaledVector(aim,turningPower).normalize(); // TODO make this line framerate independent
 
         // move
-        const PLAYER_SPEED = 0.2;
 
         let dir: Vector2 = new Vector2(0, 0);
 
@@ -81,7 +76,7 @@ state.time = 0;
             state.player.height = Math.max(0, state.player.height);
         }
 
-        const ufoSpeedMuiltiplier = 0.95 + 0.18 * Math.pow(0.5,state.time / (1000 * 10));
+        const ufoSpeedMuiltiplier = UFO_SPEED_MULT.start + (UFO_SPEED_MULT.end - UFO_SPEED_MULT.start) * Math.pow(0.5,state.time / (1000 * UFO_SPEED_MULT.halfLifeSeconds));
         state.slowtimer = Math.max(0, state.slowtimer-delta);
 
         state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / ufoSpeedMuiltiplier * (abductingPlayer ? 0.5 : 1) * (state.slowtimer > 0 ? 0.8 : 1));
@@ -89,7 +84,6 @@ state.time = 0;
         state.items.forEach(item => {
             if (state.ufo.pos.distanceToSquared(item.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
                 item.height += ITEM_ABDUCTION_SPEED;
-                item.object && (item.object.position.setY(item.height));
                 if (item.height > ABDUCTION_HEIGHT) {
                     state.slowtimer += 500; // add the slow effect for 500ms
                     if(state.bonk){
@@ -98,18 +92,16 @@ state.time = 0;
                         }
                         state.bonk.play();
                     }
-                    removeItem(state, item);
+                    item.removeItem(state);
                 }
             } else if (item.height > 0) {
-                item.height -= PLAYER_SPEED;
-                item.height = Math.max(0, item.height);
-                item.object && (item.object.position.setY(item.height));
+                item.height = Math.max(0, item.height - PLAYER_SPEED);
             }
         });
 
         // replenish items
         if (state.assets && state.items.length < 30 && Math.random() < 0.1) { // TODO rate is framerate dependent
-            addItem(state, Math.random() * 40, Math.random() * 40);
+            Item.registerItem(state, Math.random() * 40, Math.random() * 40);
         }
     } else {
          if (KEYS["Enter"] || KEYS["Space"]) {
