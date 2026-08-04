@@ -30,7 +30,8 @@ export type State = {
     popup: {
         visible: OnChange<boolean>;
         content: OnChange<string>;
-    }
+    },
+    timer: OnChange<number>
 }
 
 export function initState(): State {
@@ -54,7 +55,8 @@ export function initState(): State {
         popup: {
             visible: new OnChange(true),
             content: new OnChange(INTRO_TEXT)
-        }
+        },
+        timer: new OnChange(0)
     };
     return state;
 }

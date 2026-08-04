@@ -20,6 +20,7 @@ function tick(time: number) {
     // update
     if (state.mode === "PLAYING") {
         state.time += delta;
+        state.timer.value = Math.floor(state.time/1000);
 
         // 0.04 to (0.04 + 0.1) in 45 seconds
         const turningPower = TURNING_POWER.start + (TURNING_POWER.end - TURNING_POWER.start) * Math.pow(0.5, state.time / (1000 * TURNING_POWER.halfLifeSeconds));
@@ -105,7 +106,7 @@ function tick(time: number) {
             Item.registerItem(state, Math.random() * 40, Math.random() * 40);
         }
     } else {
-        if (KEYS["Enter"] || KEYS["Space"]) {
+        if (KEYS["Enter"] || KEYS[" "]) {
             (window as any).play();
         }
     }
@@ -153,9 +154,7 @@ async function initThreeJs() {
     renderer.shadowMap.type = PCFShadowMap; //  Makes shadow edges smoother
     await loadScene(state);
 
-    placeholder.parentElement!.replaceChild(renderer.domElement, placeholder);
-
-    initUi(state, renderer.domElement.parentElement!);
+    initUi(state, renderer.domElement);
 }
 
 // TODO do something better than making this global
