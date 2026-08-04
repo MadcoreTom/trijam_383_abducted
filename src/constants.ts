@@ -16,3 +16,8 @@ export const UFO_SPEED_MULT = {
     end: 0.95 + 0.18,
     halfLifeSeconds: 10
 } as const;
+
+export const INTRO_TEXT = `<p><u>You were the chosen one</u> by the aliens, and now you must avoid being abducted by their UFO at all costs</p>
+<p>Controls: WASD or Arrow keys</p>
+<p>Made for the TriJam game jam #383</p>
+<button onclick='play()'>Play</button>`

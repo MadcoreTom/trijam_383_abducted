@@ -152,3 +152,18 @@ stack(
 final sound effects, and difficulty increases
 
 Uploaded to here https://itch.io/jam/trijam-383/rate/4855560
+
+---
+
+Other Ideas
+* make the spotlight better than an inverted cone
+* add pickup counters
+* make items move towards the centre of the UFO when lifted
+* make all items nudge
+    * make the player just a special item
+* animate the player's walk
+* count the cow abductions
+* have the camera side-scroll?
+    * maybe other UFOs shoot you if you're on the left border
+* make the ufo sway as it turns
+* make items rotate as they're lifted

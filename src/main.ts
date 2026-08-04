@@ -3,6 +3,7 @@ import { loadScene } from "./scene_loader";
 import { initState, resetSate } from "./state";
 import { Item } from "./item";
 import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
+import { initUi } from "./ui";
 
 console.table(["Hello World", new Date()]);
 
@@ -13,7 +14,7 @@ const renderer = new WebGLRenderer({ antialias: true });
 let lastTime = 0;
 
 function tick(time: number) {
-    const delta = Math.min(100,time - lastTime);
+    const delta = Math.min(100, time - lastTime);
     lastTime = time;
 
     // update
@@ -23,7 +24,7 @@ function tick(time: number) {
         // 0.04 to (0.04 + 0.1) in 45 seconds
         const turningPower = TURNING_POWER.start + (TURNING_POWER.end - TURNING_POWER.start) * Math.pow(0.5, state.time / (1000 * TURNING_POWER.halfLifeSeconds));
         const aim = state.player.pos.clone().sub(state.ufo.pos).normalize();
-        state.ufo.direction.addScaledVector(aim,turningPower).normalize(); // TODO make this line framerate independent
+        state.ufo.direction.addScaledVector(aim, turningPower).normalize(); // TODO make this line framerate independent
 
         // move
 
@@ -45,8 +46,8 @@ function tick(time: number) {
             if (dir.lengthSq() > 0) {
                 state.player.pos.add(dir?.normalize().multiplyScalar(PLAYER_SPEED));
                 //clamp position to 40x40
-                state.player.pos.setX(Math.max(0,Math.min(40, state.player.pos.x)));
-                state.player.pos.setY(Math.max(0,Math.min(40, state.player.pos.y)));
+                state.player.pos.setX(Math.max(0, Math.min(40, state.player.pos.x)));
+                state.player.pos.setY(Math.max(0, Math.min(40, state.player.pos.y)));
             }
         }
 
@@ -55,29 +56,29 @@ function tick(time: number) {
             state.player.height += PLAYER_ABDUCTION_SPEED;
             abductingPlayer = true;
             if (state.player.height > ABDUCTION_HEIGHT) {
-                  if(state.abduct){
-                        if(state.abduct.isPlaying){
-                            state.abduct.stop();
-                        }
-                        state.abduct.play();
+                if (state.abduct) {
+                    if (state.abduct.isPlaying) {
+                        state.abduct.stop();
                     }
+                    state.abduct.play();
+                }
                 state.mode = "GAMEOVER";
                 state.topTime = Math.max(state.topTime, state.time);
-                overlay.style.display = "block";
-                overlay.innerHTML = `<p><b>You got abducted</b> by the aliens! You Lose!</p>
+                state.popup.visible.value = true;
+                state.popup.content.value = `<p><b>You got abducted</b> by the aliens! You Lose!</p>
     <p>You survived <u>${Math.floor(state.time / 1000)} seconds</u>. Your best score is ${Math.floor(state.topTime / 1000)} seconds.<br>Try and get a higher score</p>
 <p>Controls: WASD or Arrow keys</p>
 <p>Made for the TriJam game jam #383</p>
 <button onclick='play()'>Play</button>`;
-state.time = 0;
+                state.time = 0;
             }
         } else if (state.player.height > 0) {
             state.player.height -= PLAYER_ABDUCTION_SPEED;
             state.player.height = Math.max(0, state.player.height);
         }
 
-        const ufoSpeedMuiltiplier = UFO_SPEED_MULT.start + (UFO_SPEED_MULT.end - UFO_SPEED_MULT.start) * Math.pow(0.5,state.time / (1000 * UFO_SPEED_MULT.halfLifeSeconds));
-        state.slowtimer = Math.max(0, state.slowtimer-delta);
+        const ufoSpeedMuiltiplier = UFO_SPEED_MULT.start + (UFO_SPEED_MULT.end - UFO_SPEED_MULT.start) * Math.pow(0.5, state.time / (1000 * UFO_SPEED_MULT.halfLifeSeconds));
+        state.slowtimer = Math.max(0, state.slowtimer - delta);
 
         state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / ufoSpeedMuiltiplier * (abductingPlayer ? 0.5 : 1) * (state.slowtimer > 0 ? 0.8 : 1));
 
@@ -86,8 +87,8 @@ state.time = 0;
                 item.height += ITEM_ABDUCTION_SPEED;
                 if (item.height > ABDUCTION_HEIGHT) {
                     state.slowtimer += 500; // add the slow effect for 500ms
-                    if(state.bonk){
-                        if(state.bonk.isPlaying){
+                    if (state.bonk) {
+                        if (state.bonk.isPlaying) {
                             state.bonk.stop();
                         }
                         state.bonk.play();
@@ -104,9 +105,9 @@ state.time = 0;
             Item.registerItem(state, Math.random() * 40, Math.random() * 40);
         }
     } else {
-         if (KEYS["Enter"] || KEYS["Space"]) {
-              (window as any).play();
-            }
+        if (KEYS["Enter"] || KEYS["Space"]) {
+            (window as any).play();
+        }
     }
 
     // update scene
@@ -121,8 +122,7 @@ state.time = 0;
         state.player.object.position.set(state.player.pos.x, state.player.height, state.player.pos.y)
     }
 
-    // state.camera.position.set(state.player.pos.x, 600, 500);
-    // state.camera.lookAt(state.player.pos.x, 0, (200 * 2 + state.player.pos.y) / 3);
+
     state.camera.position.set(20, 50, 100);
     state.camera.lookAt(20, 0, 20);
 
@@ -145,20 +145,6 @@ function onKey(down: boolean): (evt: KeyboardEvent) => unknown {
 window.addEventListener("keydown", onKey(true));
 window.addEventListener("keyup", onKey(false));
 
-const overlay = document.createElement("div") as HTMLDivElement;
-overlay.style.background = "black";
-overlay.style.border = "2px solid #1f1";
-overlay.style.padding = "10px"
-overlay.style.margin = (HEIGHT * -2/3) + "px auto"
-overlay.style.zIndex = "100";
-overlay.style.position = "relative"
-overlay.style.width = (WIDTH *2/3) + "px";
-overlay.style.textAlign = "center";
-overlay.innerHTML = `<p><u>You were the chosen one</u> by the aliens, and now you must avoid being abducted by their UFO at all costs</p>
-<p>Controls: WASD or Arrow keys</p>
-<p>Made for the TriJam game jam #383</p>
-<button onclick='play()'>Play</button>`;
-
 async function initThreeJs() {
     renderer.setSize(WIDTH, HEIGHT);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -169,15 +155,13 @@ async function initThreeJs() {
 
     placeholder.parentElement!.replaceChild(renderer.domElement, placeholder);
 
-
-
-    renderer.domElement.parentElement!.appendChild(overlay);
+    initUi(state, renderer.domElement.parentElement!);
 }
 
-// eww, gross
+// TODO do something better than making this global
 (window as any).play = () => {
     state.mode = "PLAYING";
-    overlay.style.display = "none";
+    state.popup.visible.value = false;
     resetSate(state);
 }
 

@@ -1,7 +1,8 @@
 import { Audio, AudioListener, Camera, Object3D, PerspectiveCamera, Scene, SpotLight, Vector2 } from "three";
 import { GLTF } from "three/examples/jsm/Addons.js";
-import { addItem, Item } from "./item";
-import { HEIGHT, WIDTH } from "./constants";
+import { Item } from "./item";
+import { HEIGHT, INTRO_TEXT, WIDTH } from "./constants";
+import { OnChange } from "./util/onchange";
 
 export type State = {
     mode: "PLAYING" | "GAMEOVER" | "INTRO",
@@ -25,7 +26,11 @@ export type State = {
     topTime:number;
     slowtimer: number;
     bonk?: Audio,
-    abduct?: Audio
+    abduct?: Audio,
+    popup: {
+        visible: OnChange<boolean>;
+        content: OnChange<string>;
+    }
 }
 
 export function initState(): State {
@@ -45,7 +50,11 @@ export function initState(): State {
         ],
         time: 0,
         topTime: 0,
-        slowtimer:0
+        slowtimer:0,
+        popup: {
+            visible: new OnChange(true),
+            content: new OnChange(INTRO_TEXT)
+        }
     };
     return state;
 }
