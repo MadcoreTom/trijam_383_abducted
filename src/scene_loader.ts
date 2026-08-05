@@ -1,6 +1,6 @@
-import { GLTF, GLTFLoader } from "three/examples/jsm/Addons.js";
-import { State } from "./state";
-import { AmbientLight, Audio, AudioListener, AudioLoader, DirectionalLight, FrontSide, HemisphereLight, Material, MeshStandardMaterial, SpotLight, Vector3 } from "three";
+import { type GLTF, GLTFLoader } from "three/examples/jsm/Addons.js";
+import type { State } from "./state";
+import { AmbientLight, Audio, AudioListener, AudioLoader, DirectionalLight, FrontSide, HemisphereLight, type MeshStandardMaterial, SpotLight } from "three";
 
 export async function loadScene(state: State): Promise<void> {
 
@@ -76,7 +76,7 @@ export async function loadScene(state: State): Promise<void> {
     const sound = new Audio(listener);
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new AudioLoader();
-    audioLoader.load('music.ogg', function (buffer) {
+    audioLoader.load('music.ogg', (buffer) => {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(0.5);
@@ -85,7 +85,7 @@ export async function loadScene(state: State): Promise<void> {
 
      const bonk = new Audio(listener);
     // load a sound and set it as the Audio object's buffer
-    audioLoader.load('bonk.wav', function (buffer) {
+    audioLoader.load('bonk.wav', (buffer) => {
         bonk.setBuffer(buffer);
         bonk.setLoop(false);
         bonk.setVolume(0.75);
@@ -95,7 +95,7 @@ export async function loadScene(state: State): Promise<void> {
     
      const abduct = new Audio(listener);
     // load a sound and set it as the Audio object's buffer
-    audioLoader.load('abduct.wav', function (buffer) {
+    audioLoader.load('abduct.wav', (buffer) => {
         abduct.setBuffer(buffer);
         abduct.setLoop(false);
         abduct.setVolume(0.75);

@@ -8,7 +8,6 @@ import { initUi } from "./ui";
 console.table(["Hello World", new Date()]);
 
 const state = initState();
-const placeholder = document.getElementById("debug") as HTMLCanvasElement;
 const renderer = new WebGLRenderer({ antialias: true });
 
 let lastTime = 0;
@@ -29,9 +28,9 @@ function tick(time: number) {
 
         // move
 
-        let dir: Vector2 = new Vector2(0, 0);
+        const dir: Vector2 = new Vector2(0, 0);
 
-        if (state.player.height == 0) {
+        if (state.player.height === 0) {
             if (KEYS["ArrowUp"] || KEYS["w"]) {
                 dir.setY(-1);
             }

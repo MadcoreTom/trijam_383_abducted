@@ -1,5 +1,5 @@
 import { HEIGHT, WIDTH } from "./constants";
-import { State } from "./state";
+import type { State } from "./state";
 
 function applyStyle(elem: HTMLElement, style: Partial<CSSStyleDeclaration>) {
     let name: keyof CSSStyleDeclaration

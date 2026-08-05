@@ -1,5 +1,5 @@
-import { Object3D, Vector2 } from "three";
-import { type State } from "./state";
+import { type Object3D, Vector2 } from "three";
+import type { State } from "./state";
 
 const ITEM_MODELS = ["Item_cow", "Item_tree", "Hay"];
 
@@ -28,7 +28,7 @@ export class Item {
 
     public removeItem(state: State): void {
         state.scene.remove(this.object!);
-        state.items = state.items.filter(i => i != this);
+        state.items = state.items.filter(i => i !== this);
     }
 
     public set height(height:number){

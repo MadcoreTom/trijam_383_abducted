@@ -1,6 +1,6 @@
-import { Audio, AudioListener, Camera, Object3D, PerspectiveCamera, Scene, SpotLight, Vector2 } from "three";
-import { GLTF } from "three/examples/jsm/Addons.js";
-import { Item } from "./item";
+import { type Audio, type AudioListener, type Camera, type Object3D, PerspectiveCamera, Scene, type SpotLight, Vector2 } from "three";
+import type { GLTF } from "three/examples/jsm/Addons.js";
+import type { Item } from "./item";
 import { HEIGHT, INTRO_TEXT, WIDTH } from "./constants";
 import { OnChange } from "./util/onchange";
 
@@ -64,7 +64,7 @@ export function initState(): State {
 export function resetSate(state: State) {
     const toRemove: Object3D[] = [];
     state.scene.traverse(ob => {
-        if (ob && ob.name.startsWith("ITEM")) {
+        if (ob?.name.startsWith("ITEM")) {
             toRemove.push(ob);
         };
     });

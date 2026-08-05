@@ -1,17 +1,20 @@
 {
-  "name": "trijam_383-chosen-one",
-  "version": "1.0.0",
-  "description": "My trijam 383 entry",
-  "scripts": {
-    "start": "esbuild src/main.ts --bundle --servedir=./www/ --outdir=./www/js",
-    "build": "esbuild src/main.ts --bundle --minify --outdir=./www/js"
-  },
-  "author": "madcoretom",
-  "dependencies": {
-    "three": "^0.184.0"
-  },
-  "devDependencies": {
-    "@types/three": "^0.184.1",
-    "esbuild": "^0.28.0"
-  }
+	"name": "trijam_383-chosen-one",
+	"version": "1.0.0",
+	"description": "My trijam 383 entry",
+	"scripts": {
+		"start": "esbuild src/main.ts --bundle --servedir=./www/ --outdir=./www/js",
+		"build": "esbuild src/main.ts --bundle --minify --outdir=./www/js",
+		"lint": "npx @biomejs/biome lint",
+		"lint:fix": "npx @biomejs/biome lint --fix"
+	},
+	"author": "madcoretom",
+	"dependencies": {
+		"three": "^0.184.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.7",
+		"@types/three": "^0.184.1",
+		"esbuild": "^0.28.0"
+	}
 }
