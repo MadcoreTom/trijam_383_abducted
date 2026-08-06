@@ -12,14 +12,14 @@ export async function loadScene(state: State): Promise<void> {
             const mat = ob.material as MeshStandardMaterial;
             mat.side = FrontSide;
             mat.needsUpdate = true;
-                if (mat.isMeshStandardMaterial) {
-            mat.roughness = 0.8;
-            mat.metalness = 0.0;
-        } 
+            if (mat.isMeshStandardMaterial) {
+                mat.roughness = 0.8;
+                mat.metalness = 0.0;
+            }
             console.log(mat)
 
-			ob.castShadow = true;
-			ob.receiveShadow = true;
+            ob.castShadow = true;
+            ob.receiveShadow = true;
         }
     })
 
@@ -30,8 +30,8 @@ export async function loadScene(state: State): Promise<void> {
     state.scene.add(state.player.object);
 
     const grass = assets.scene.getObjectByName("Grass")!;
-    grass.scale.set(4,1,4);
-    grass.position.set(0,0,40);
+    grass.scale.set(4, 1, 4);
+    grass.position.set(0, 0, 40);
     state.scene.add(grass);
 
     console.log(state.ufo.object, state.player.object)
@@ -43,25 +43,27 @@ export async function loadScene(state: State): Promise<void> {
     state.scene.add(skyLight);
     const LIGHT_BOUNDS = 40;
     const moonLight = new DirectionalLight(0xffffff, 8);
-    moonLight.position.set(20,10,20);
-    moonLight.target.position.set(20,0,20);
+    moonLight.position.set(20, 10, 20);
+    moonLight.target.position.set(20, 0, 20);
     moonLight.castShadow = true;
     moonLight.shadow.mapSize.width = 2048;
     moonLight.shadow.mapSize.height = 2048;
-    moonLight.shadow.camera.near = 0.5;    
-    moonLight.shadow.camera.far = 20;      
-    moonLight.shadow.camera.left = -LIGHT_BOUNDS;
-    moonLight.shadow.camera.right = LIGHT_BOUNDS;
-    moonLight.shadow.camera.top = LIGHT_BOUNDS;
-    moonLight.shadow.camera.bottom = -LIGHT_BOUNDS;
-    moonLight.shadow.bias= -0.01; 
+    Object.assign(moonLight.shadow.camera, {
+        near: 0.5,
+        far: 20,
+        left: -LIGHT_BOUNDS,
+        right: LIGHT_BOUNDS,
+        top: LIGHT_BOUNDS,
+        bottom: -LIGHT_BOUNDS,
+    });
+    moonLight.shadow.bias = -0.01;
     moonLight.shadow.intensity = 0.75;
     state.scene.add(moonLight);
     state.scene.add(moonLight.target);
 
-    const spot = new SpotLight(0x00ff00, 10, 0, Math.PI*0.1, 0.2, 0);
-    spot.position.set(20,10,20);
-    spot.target.position.set(20,0,20);
+    const spot = new SpotLight(0x00ff00, 10, 0, Math.PI * 0.1, 0.2, 0);
+    spot.position.set(20, 10, 20);
+    spot.target.position.set(20, 0, 20);
     state.scene.add(spot);
     state.scene.add(spot.target);
     state.ufo.spotlight = spot;
@@ -83,7 +85,7 @@ export async function loadScene(state: State): Promise<void> {
         sound.play();
     });
 
-     const bonk = new Audio(listener);
+    const bonk = new Audio(listener);
     // load a sound and set it as the Audio object's buffer
     audioLoader.load('bonk.wav', (buffer) => {
         bonk.setBuffer(buffer);
@@ -92,8 +94,8 @@ export async function loadScene(state: State): Promise<void> {
     });
     state.bonk = bonk;
 
-    
-     const abduct = new Audio(listener);
+
+    const abduct = new Audio(listener);
     // load a sound and set it as the Audio object's buffer
     audioLoader.load('abduct.wav', (buffer) => {
         abduct.setBuffer(buffer);

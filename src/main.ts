@@ -51,6 +51,30 @@ function tick(time: number) {
             }
         }
 
+		// temp items bumping
+		const RAD_SQ = 1.5 * 1.5;
+		for (let ai = 0; ai < state.items.length; ai++) {
+			const a = state.items[ai];
+			// other items
+			for (let bi = ai + 1; bi < state.items.length; bi++) {
+				const b = state.items[bi];
+				if (a.pos.distanceToSquared(b.pos) < RAD_SQ) {
+					const delta = a.pos.clone().sub(b.pos).normalize();
+					a.pos.addScaledVector(delta, 0.01);
+					b.pos.addScaledVector(delta, -0.01);
+					a.updatePos();
+					b.updatePos();
+				}
+			}
+
+			// and player
+			if (a.pos.distanceToSquared(state.player.pos) < RAD_SQ) {
+				const delta = a.pos.clone().sub(state.player.pos).normalize();
+				a.pos.addScaledVector(delta, 0.05);
+				a.updatePos();
+			}
+		}
+
         let abductingPlayer = false;
         if (state.ufo.pos.distanceToSquared(state.player.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
             state.player.height += PLAYER_ABDUCTION_SPEED;

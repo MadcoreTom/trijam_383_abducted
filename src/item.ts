@@ -39,4 +39,9 @@ export class Item {
     public get height():number{
         return this._height;
     }
+
+    public updatePos():void{
+        this.object.position.setX(this.pos.x);
+        this.object.position.setZ(this.pos.y);
+    }
 }
