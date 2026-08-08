@@ -18,7 +18,9 @@ export async function loadScene(state: State): Promise<void> {
             }
             console.log(mat)
 
-            ob.castShadow = true;
+            if (ob.name !== "ufo") {
+                ob.castShadow = true;
+            }
             ob.receiveShadow = true;
         }
     })
@@ -39,10 +41,10 @@ export async function loadScene(state: State): Promise<void> {
     const ambientLight = new AmbientLight(0xffffff, 0.5);
     state.scene.add(ambientLight);
 
-    const skyLight = new HemisphereLight(0xaaccff, 0x000000, 8.0);
+    const skyLight = new HemisphereLight(0xaaccff, 0x000000, 2.5);
     state.scene.add(skyLight);
     const LIGHT_BOUNDS = 40;
-    const moonLight = new DirectionalLight(0xffffff, 8);
+    const moonLight = new DirectionalLight(0xffffff, 4);
     moonLight.position.set(20, 10, 20);
     moonLight.target.position.set(20, 0, 20);
     moonLight.castShadow = true;
@@ -61,7 +63,7 @@ export async function loadScene(state: State): Promise<void> {
     state.scene.add(moonLight);
     state.scene.add(moonLight.target);
 
-    const spot = new SpotLight(0x00ff00, 10, 0, Math.PI * 0.1, 0.2, 0);
+    const spot = new SpotLight(0x00ff00, 10, 0, Math.PI * 0.1, 0.1, 0);
     spot.position.set(20, 10, 20);
     spot.target.position.set(20, 0, 20);
     state.scene.add(spot);

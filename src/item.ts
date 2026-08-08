@@ -1,13 +1,16 @@
 import { type Object3D, Vector2 } from "three";
 import type { State } from "./state";
 
-const ITEM_MODELS = ["Item_cow", "Item_tree", "Hay"];
+const ITEM_MODELS = ["Item_cow", "Item_cow2", "Item_tree","Item_tree2", "Hay"];
 
 export class Item {
     private constructor(
         public readonly pos: Vector2,
         private _height: number,
-        private readonly object: Object3D
+        private readonly object: Object3D,
+        public readonly liftTimeMult: number,
+        public readonly canBump: boolean
+
     ) {
 
     }
@@ -18,7 +21,14 @@ export class Item {
         object.name = "ITEM" + state.items.length;
         state.scene.add(object);
 
-        const item = new Item(new Vector2(x, y), 0, object);
+        let liftTimeMult=1;
+        let canBump = true;
+        if (name === "Item_tree" || name === "Item_tree2"){
+            liftTimeMult = 1.5;
+            canBump = false;
+        }
+
+        const item = new Item(new Vector2(x, y), 0, object, liftTimeMult, canBump);
 
         state.items.push(item);
         object.position.set(x, 0, y);

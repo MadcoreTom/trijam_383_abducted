@@ -2,7 +2,7 @@ import { PCFShadowMap, Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
 import { initState, resetSate } from "./state";
 import { Item } from "./item";
-import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
+import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, ITEM_DELAY_MULT, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
 import { initUi } from "./ui";
 
 console.table(["Hello World", new Date()]);
@@ -11,6 +11,10 @@ const state = initState();
 const renderer = new WebGLRenderer({ antialias: true });
 
 let lastTime = 0;
+
+function halfLife(start:number, end:number, halfLife:number, time:number):number{
+    return start + (end - start) * Math.pow(0.5, time / halfLife);
+}
 
 function tick(time: number) {
     const delta = Math.min(100, time - lastTime);
@@ -22,7 +26,7 @@ function tick(time: number) {
         state.timer.value = Math.floor(state.time/1000);
 
         // 0.04 to (0.04 + 0.1) in 45 seconds
-        const turningPower = TURNING_POWER.start + (TURNING_POWER.end - TURNING_POWER.start) * Math.pow(0.5, state.time / (1000 * TURNING_POWER.halfLifeSeconds));
+        const turningPower = halfLife(TURNING_POWER.start, TURNING_POWER.end, TURNING_POWER.halfLifeSeconds, state.time / 1000);
         const aim = state.player.pos.clone().sub(state.ufo.pos).normalize();
         state.ufo.direction.addScaledVector(aim, turningPower).normalize(); // TODO make this line framerate independent
 
@@ -55,25 +59,31 @@ function tick(time: number) {
 		const RAD_SQ = 1.5 * 1.5;
 		for (let ai = 0; ai < state.items.length; ai++) {
 			const a = state.items[ai];
-			// other items
-			for (let bi = ai + 1; bi < state.items.length; bi++) {
-				const b = state.items[bi];
-				if (a.pos.distanceToSquared(b.pos) < RAD_SQ) {
-					const delta = a.pos.clone().sub(b.pos).normalize();
-					a.pos.addScaledVector(delta, 0.01);
-					b.pos.addScaledVector(delta, -0.01);
-					a.updatePos();
-					b.updatePos();
-				}
-			}
+            // other items
+            for (let bi = ai + 1; bi < state.items.length; bi++) {
+                const b = state.items[bi];
+                if (a.pos.distanceToSquared(b.pos) < RAD_SQ) {
+                    const delta = a.pos.clone().sub(b.pos).normalize();
+                    if (a.canBump) {
+                        a.pos.addScaledVector(delta, 0.01);
+                        a.updatePos();
+                    }
+                    if (b.canBump) {
+                        b.pos.addScaledVector(delta, -0.01);
+                        b.updatePos();
+                    }
+                }
+            }
 
-			// and player
-			if (a.pos.distanceToSquared(state.player.pos) < RAD_SQ) {
-				const delta = a.pos.clone().sub(state.player.pos).normalize();
-				a.pos.addScaledVector(delta, 0.05);
-				a.updatePos();
-			}
-		}
+            // and player
+            if (a.pos.distanceToSquared(state.player.pos) < RAD_SQ) {
+                const delta = a.pos.clone().sub(state.player.pos).normalize();
+                if (a.canBump) {
+                    a.pos.addScaledVector(delta, 0.05);
+                    a.updatePos();
+                }
+            }
+        }
 
         let abductingPlayer = false;
         if (state.ufo.pos.distanceToSquared(state.player.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
@@ -101,16 +111,22 @@ function tick(time: number) {
             state.player.height = Math.max(0, state.player.height);
         }
 
-        const ufoSpeedMuiltiplier = UFO_SPEED_MULT.start + (UFO_SPEED_MULT.end - UFO_SPEED_MULT.start) * Math.pow(0.5, state.time / (1000 * UFO_SPEED_MULT.halfLifeSeconds));
+        const ufoSpeedMuiltiplier = halfLife(UFO_SPEED_MULT.start, UFO_SPEED_MULT.end, UFO_SPEED_MULT.halfLifeSeconds, state.time / 1000);
         state.slowtimer = Math.max(0, state.slowtimer - delta);
 
         state.ufo.pos.addScaledVector(state.ufo.direction, PLAYER_SPEED / ufoSpeedMuiltiplier * (abductingPlayer ? 0.5 : 1) * (state.slowtimer > 0 ? 0.8 : 1));
 
         state.items.forEach(item => {
             if (state.ufo.pos.distanceToSquared(item.pos) < ABDUCTION_RADIUS * ABDUCTION_RADIUS) {
-                item.height += ITEM_ABDUCTION_SPEED;
+                item.height += ITEM_ABDUCTION_SPEED / item.liftTimeMult;
+                
+                // move towards centre of ufo too
+                const d =item.pos.clone().sub(state.ufo.pos);
+                item.pos.addScaledVector(d, -0.1);
+                item.updatePos();
+                
                 if (item.height > ABDUCTION_HEIGHT) {
-                    state.slowtimer += 500; // add the slow effect for 500ms
+                    state.slowtimer += 500 * halfLife(ITEM_DELAY_MULT.start, ITEM_DELAY_MULT.end, ITEM_DELAY_MULT.halfLifeSeconds, state.time); // add the slow effect for 500ms
                     if (state.bonk) {
                         if (state.bonk.isPlaying) {
                             state.bonk.stop();
