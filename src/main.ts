@@ -2,7 +2,7 @@ import { PCFShadowMap, Vector2, WebGLRenderer } from "three";
 import { loadScene } from "./scene_loader";
 import { initState, resetSate } from "./state";
 import { Item } from "./item";
-import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, ITEM_DELAY_MULT, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
+import { ABDUCTION_HEIGHT, ABDUCTION_RADIUS, HEIGHT, ITEM_ABDUCTION_SPEED, ITEM_DELAY_MULT, ITEM_TARGET_COUNT, PLAYER_ABDUCTION_SPEED, PLAYER_SPEED, TURNING_POWER, UFO_SPEED_MULT, WIDTH } from "./constants";
 import { initUi } from "./ui";
 
 console.table(["Hello World", new Date()]);
@@ -13,7 +13,7 @@ const renderer = new WebGLRenderer({ antialias: true });
 let lastTime = 0;
 
 function halfLife(start:number, end:number, halfLife:number, time:number):number{
-    return start + (end - start) * Math.pow(0.5, time / halfLife);
+    return end + (start - end) * Math.pow(0.5, time / halfLife);
 }
 
 function tick(time: number) {
@@ -141,7 +141,8 @@ function tick(time: number) {
         });
 
         // replenish items
-        if (state.assets && state.items.length < 30 && Math.random() < 0.1) { // TODO rate is framerate dependent
+        const itemTargetCount = halfLife(ITEM_TARGET_COUNT.start, ITEM_TARGET_COUNT.end, ITEM_TARGET_COUNT.halfLifeSeconds, state.time/1000);
+        if (state.assets && state.items.length < itemTargetCount && Math.random() < 0.1) { // TODO rate is framerate dependent
             Item.registerItem(state, Math.random() * 40, Math.random() * 40);
         }
     } else {

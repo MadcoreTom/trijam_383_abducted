@@ -22,6 +22,12 @@ export const ITEM_DELAY_MULT = {
     halfLifeSeconds: 60
 } as const;
 
+export const ITEM_TARGET_COUNT = {
+    start: 30,
+    end: 0,
+    halfLifeSeconds: 80
+} as const;
+
 export const INTRO_TEXT = `<p><u>You were the chosen one</u> by the aliens, and now you must avoid being abducted by their UFO at all costs</p>
 <p>Controls: WASD or Arrow keys</p>
 <p>Made for the TriJam game jam #383</p>
